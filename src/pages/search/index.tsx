@@ -1,15 +1,14 @@
+import BookItem from "@/components/book-item";
 import SearchableLayout from "@/components/searchable-layout";
-import { useRouter } from "next/router";
-import { ReactNode, use } from "react";
-
+import books from "@/mock/books.json";
+import { ReactNode } from "react";
 export default function Search() {
-  const router = useRouter();
-  const { q } = router.query;
   return (
-    <>
-      <h1>search페이지 입니다.</h1>
-      <h2>검색어는 {q}입니다.</h2>
-    </>
+    <div>
+      {books.map((book) => (
+        <BookItem key={book.id} {...book}></BookItem>
+      ))}
+    </div>
   );
 }
 
