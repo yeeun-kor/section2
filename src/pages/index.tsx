@@ -8,8 +8,8 @@ import { InferGetServerSidePropsType } from "next";
 import fetchRandom from "@/lib/fetch-random";
 
 export const getServerSideProps = async () => {
-  const allBooks = await fetchBooks();
-  const recBooks = await fetchRandom();
+  //코드 리팩토링 -> 간결하게 압축 -> Promise.all진행행
+  const [allBooks, recBooks] = await Promise.all([fetchBooks(), fetchRandom()]);
 
   return {
     props: { allBooks, recBooks },
