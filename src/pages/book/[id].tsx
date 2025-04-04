@@ -1,6 +1,13 @@
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
+import {
+  GetServerSidePropsContext,
+  GetStaticPropsContext,
+  InferGetServerSidePropsType,
+  InferGetStaticPropsType,
+} from "next";
 import style from "./[id].module.css";
 import fetchOneBooks from "@/lib/fetch-one-book";
+import { use } from "react";
+import { useRouter } from "next/router";
 
 const mockData = {
   id: 1,
@@ -14,17 +21,32 @@ const mockData = {
     "https://shopping-phinf.pstatic.net/main_3888828/38888282618.20230913071643.jpg",
 };
 
-export const getServerSideProps = async (
-  context: GetServerSidePropsContext
-) => {
-  //params! 느낌표로 무조건 id있다고 표현하기
+export const getStaticPaths = () => {
+  return {
+    paths: [
+      { params: { id: "1" } },
+      { params: { id: "2" } },
+      { params: { id: "3" } },
+    ], // 모든 경로를 미리 생성하지 않음
+    fallback: true, // 페이지가 요청될 때 생성됨
+  };
+};
+export const getStaticProps = async (context: GetStaticPropsContext) => {
   const id = context.params!.id;
   const book = await fetchOneBooks(Number(id));
+  if (!book) {
+    return { notFound: true }; // 해당하는 책이 없으면 404 페이지로 이동
+  }
   return { props: { book } };
 };
+
 export default function Page({
   book,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+}: InferGetStaticPropsType<typeof getStaticProps>) {
+  const router = useRouter();
+  if (router.isFallback) {
+    return <div>Loading...</div>; // 로딩 상태 표시
+  }
   if (!book) return "문제발생";
 
   const { id, title, subTitle, description, author, publisher, coverImgUrl } =
