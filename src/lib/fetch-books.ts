@@ -1,9 +1,10 @@
 import { BookData } from "@/types";
 
-export default async function fetchBooks(): Promise<BookData[]> {
-  //요청 주소값 불러오기
-  const url = `http://localhost:12345/book`;
-
+export default async function fetchBooks(q?: string): Promise<BookData[]> {
+  let url = "http://localhost:12345/book";
+  if (q) {
+    url += `/search?q=${q}`;
+  }
   try {
     const response = await fetch(url);
     if (!response.ok) {
